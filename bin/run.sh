@@ -57,6 +57,6 @@ if [ $# = 1 ]; then
 
 elif [ $# = 2 ]; then
 
-    ${SDL_CMD} > ${OUTPUT_FILE}
+    ${SDL_CMD} &> ${OUTPUT_FILE}
 fi
 

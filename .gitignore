@@ -1,1 +1,6 @@
+nohup.out
 log/
+src/__pycache__
+src/*.pyc
+src/model/*.pyc
+src/model/__pycache__
