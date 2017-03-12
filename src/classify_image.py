@@ -52,38 +52,77 @@ class ClassifyImage():
         Function to load datasets from cifer10
         """
 
+        #======= Start Message =======
+
+        self.log.output_msg(1, 1, "ClassifyImage.load_data() started")
+
+
         #======= Download Data =======
 
-        (self.x_train, self.y_train_pre), (self.x_test, self.y_test_pre) = cifar10.load_data()
-
-        self.log.output_msg(1, 1, "x_train.shape = {0}".format(self.x_train.shape))
-        self.log.output_msg(1, 1, "x_train.shape[0] = {0}".format(self.x_train.shape[0]))
-        self.log.output_msg(1, 1, "x_test.shape[0] = {0}".format(self.x_test.shape[0]))    
+        (self.x_train, self.y_train), (self.x_test, self.y_test) = cifar10.load_data()
 
 
         #======= Convert training data into binary style =======
 
-        self.y_train = np_utils.to_categorical(self.y_train_pre, self.class_num)
-        self.y_test = np_utils.to_categorical(self.y_test_pre, self.class_num)
+        self.y_train = np_utils.to_categorical(self.y_train, self.class_num)
+        self.y_test = np_utils.to_categorical(self.y_test, self.class_num)
+
+        self.log.output_msg(1, 1, "x_train.shape = {0}".format(self.x_train.shape))
+        self.log.output_msg(1, 1, "y_train.shape = {0}".format(self.y_train.shape))
+        self.log.output_msg(1, 1, "x_train.shape[0] = {0}".format(self.x_train.shape[0]))
+        self.log.output_msg(1, 1, "y_train.shape[0] = {0}".format(self.y_train.shape[0]))
+        self.log.output_msg(1, 1, "x_test.shape[0] = {0}".format(self.x_test.shape[0]))
+        self.log.output_msg(1, 1, "y_test.shape[0] = {0}".format(self.y_test.shape[0]))
+
+
+        #======= End Message =======
+
+        self.log.output_msg(1, 1, "ClassifyImage.load_data() ended")
 
 
     #======= Preprocessing =======
 
     def preproc(self):
 
+
+        #======= Start Message =======
+
+        self.log.output_msg(1, 1, "ClassifyImage.preproc() started")
+
+
+        self.log.output_msg(1, 1, "x_train[0][0][0] = {0}".format(self.x_train[0][0][0]))
+        self.log.output_msg(1, 1, "x_test[0][0][0] = {0}".format(self.x_test[0][0][0]))
+
         self.x_train = self.x_train.astype('float32') / 255.0
         self.x_test = self.x_test.astype('float32') / 255.0
+
+        self.log.output_msg(1, 1, "x_train[0][0][0] = {0}".format(self.x_train[0][0][0]))
+        self.log.output_msg(1, 1, "x_test[0][0][0] = {0}".format(self.x_test[0][0][0]))
+
+
+        #======= End Message =======
+
+        self.log.output_msg(1, 1, "ClassifyImage.preproc() ended")
 
 
     #======= Classification =======
 
     def run(self):
 
+
+        #======= Start Message =======
+
+        self.log.output_msg(1, 1, "ClassifyImage.run() started")
+
+
         #======= Create Network Model =======
 
         model_module = importlib.import_module(self.model_path)
         input_shape = self.x_train.shape[1:]
         output_shape = self.class_num
+
+        self.log.output_msg(1, 1, "input_shape = {0}".format(input_shape))
+        self.log.output_msg(1, 1, "output_shape = {0}".format(output_shape))
 
         self.model = model_module.create_model(
             input_shape, 
@@ -105,6 +144,9 @@ class ClassifyImage():
             optimizer=sgd,
             metrics=['accuracy']
         )
+
+
+        self.model.summary()
 
 
         #======= Start Training / Validation =======
@@ -162,6 +204,11 @@ class ClassifyImage():
                 shuffle=True,
                 callbacks=[TensorBoard(log_dir=self.log_dir)]
             )
+
+
+        #======= End Message =======
+
+        self.log.output_msg(1, 1, "ClassifyImage.run() ended")
             
 
     #======= Initialization =======
@@ -176,6 +223,7 @@ class ClassifyImage():
         #======= Setup Log =======
 
         self.log = Log(os.environ['SDL_LOG_LEVEL'])
+
 
         #======= Start Message =======
 
@@ -314,6 +362,25 @@ class ClassifyImage():
             self.data_aug_scenter = False
 
         self.log.output_msg(1, 1, "self.data_aug_scenter = {0}".format(self.data_aug_scenter))
+
+        #======= Setup Featurewise STD Normalization =======
+
+        if 'SDL_DATA_AUG_FSTDNORM' in os.environ:
+            self.data_aug_fstdnorm = bool(os.environ['SDL_DATA_AUG_FSTDNORM'])
+        else:
+            self.data_aug_fstdnorm = False
+
+        self.log.output_msg(1, 1, "self.data_aug_fstdnorm = {0}".format(self.data_aug_fstdnorm))
+
+        #======= Setup Samplewise STD Normalization =======
+
+        if 'SDL_DATA_AUG_SSTDNORM' in os.environ:
+            self.data_aug_sstdnorm = bool(os.environ['SDL_DATA_AUG_SSTDNORM'])
+        else:
+            self.data_aug_sstdnorm = False
+
+        self.log.output_msg(1, 1, "self.data_aug_sstdnorm = {0}".format(self.data_aug_sstdnorm))
+
 
         #======= Setup ZCA Whitening =======
 
