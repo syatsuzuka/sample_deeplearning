@@ -2,6 +2,11 @@
 
 This is a sample code for deep learning with Keras + Tensorflow.
 
+
+[Accuracy of model]
+loss: 0.2392 - acc: 0.9144 - val_loss: 0.6078 - val_acc: 0.8145
+
+
 [Prerequisite]
 
 * Install Python 3.x and Keras
@@ -25,5 +30,5 @@ SDL_LOG_LEVEL|Log Level|"1"
 
 Step.3) Execute the following command.
 
- $ ./bin/run.sh param/classify_image.py
+ $ ./bin/run.sh param/classify_image.param
 
