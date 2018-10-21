@@ -205,6 +205,10 @@ class ClassifyImage():
                 callbacks=[TensorBoard(log_dir=self.log_dir)]
             )
 
+        #======= Save Model =======
+
+        self.model.save(self.model_path)
+
 
         #======= End Message =======
 
